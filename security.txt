@@ -1,0 +1,4 @@
+Contact: security@snapchat.com
+Expires: 2027-01-01T00:00:00.000Z
+Acknowledgements: Thank you for keeping marveen_shalash safe.
+Policy: https://www.snapchat.com/security
