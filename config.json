@@ -1,0 +1,10 @@
+{
+  "app_id": "com.snapchat.android",
+  "version": "11.45.0.36",
+  "feature_flags": {
+    "camera_enabled": true,
+    "lens_preview": "marveen_shalash_filter",
+    "tracking": false
+  },
+  "api_endpoint": "https://aws.api.snapchat.com/v1/"
+}
